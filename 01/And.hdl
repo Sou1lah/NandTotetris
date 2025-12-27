@@ -1,0 +1,8 @@
+CHIP And {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+    Nand(a=a, b=b, out=tmp); // Step 1: NAND gate
+    Not(in=tmp, out=out);    // Step 2: NOT to get AND
+}
