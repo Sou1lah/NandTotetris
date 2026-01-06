@@ -11,13 +11,11 @@ A flip-flop is a sequential digital electronic circuit having two stable  states
 * D Flip-Flop
 * T Flip-Flop
 
-
 ### S-R Flip-Flop
 
 This is the simplest flip-flop circuit. It has a set input (S) and a  reset input (R). When in this circuit when S is set as active, the  output Q would be high and the Q' will be low. If R is set to active  then the output Q is low and the Q' is high. Once the outputs are  established, the results of the circuit are maintained until S or R get  changed, or the power is turned off.
 
 ![S-R Flip-Flop](https://www.tutorialspoint.com/digital-electronics/images/sr-flip-flop.jpg)
-
 
 ### J-K Flip-Flop
 
@@ -27,13 +25,11 @@ When J and K both are low then NO change occurs at the output. If  both J and K 
 
 ![J-K Flip-Flop](https://www.tutorialspoint.com/digital-electronics/images/jk-flip-flop.jpg)
 
-
 ### T Flip-Flop
 
 A T flip-flop (Toggle Flip-flop) is a simplified version of JK  flip-flop. The T flop is obtained by connecting the J and K inputs  together. The flip-flop has one input terminal and clock input. These  flip-flops are said to be T flip-flops because of their ability to  toggle the input state. Toggle flip-flops are mostly used in counters.
 
 ![T Flip-Flop](https://www.tutorialspoint.com/digital-electronics/images/t-flip-flop.jpg)
-
 
 ### What is D Flip Flop?
 
@@ -44,7 +40,6 @@ Considering the pulse input is at 0, the outputs of gates 3 and 4 are  at the 1 
 ![](https://www.tutorialspoint.com/digital-electronics/images/what-is-d-flip-flop.jpg)
 
 ## register
-
 
 In digital electronic devices and systems, **binary registers**  are one of the crucial components that play a vital role in data storage  and manipulation. Binary registers are the fundamental building blocks  in memory unit of a digital system or device.
 
@@ -112,48 +107,354 @@ Binary register data plays an important role in the functioning of a  digit elec
 
 Overall, binary register and binary register data are fundamental  components of a digital system for performing operations like data  storage, manipulation, retrieval, etc.
 
+### further reading
+
+The Key Idea: Memory with Time Steps A register works over time steps. Think of it like a photo album:
+
+Each moment in time (t) takes a photo of what the register contains The next moment (t+1) shows what happens next
+Let's say you have a Bit register and trace through it:
+
+example 01 :
+
+TIME 0 (t=0):
+├─ Current stored value = 0
+├─ Input (in) = 1
+├─ Load signal = 1 (means: STORE this value)
+└─ Output (out) = 0 (still shows old value)
+
+TIME 1 (t=1):
+├─ Current stored value = 1 (loaded from previous input!)
+├─ Input (in) = 0
+├─ Load signal = 0 (means: DON'T change, keep current)
+└─ Output (out) = 1 (now shows the stored value from t=0)
+
+TIME 2 (t=2):
+├─ Current stored value = 1 (unchanged, because load=0)
+├─ Input (in) = 1
+├─ Load signal = 0 (don't change)
+└─ Output (out) = 1 (still 1, unchanged)
+
+TIME 3 (t=3):
+├─ Current stored value = 1 (unchanged, because load=0)
+├─ Input (in) = 0
+├─ Load signal = 1 (NOW load the new value!)
+└─ Output (out) = 1 (still shows old value, will update next cycle)
+
+TIME 4 (t=4):
+├─ Current stored value = 0 (loaded from t=3 input!)
+├─ Input (in) = 0
+├─ Load signal = 0
+└─ Output (out) = 0 (now the new value appears)
+
+How the parts work together:
+
+┌─────────────────────────────────────┐
+│         1-BIT REGISTER              │
+│                                     │
+│  in ──┐                             │
+│       ├─→ [Mux] ──→ [DFF] ──→ out  │
+│  load │   (choose)  (store)         │
+│       │                             │
+│       └─ (feedback: old value)      │
+└─────────────────────────────────────┘
+
+The two parts:
+
+Mux (Multiplexer) - The "decision maker":
+
+If load=1: Choose in (new value)
+If load=0: Choose feedback (old value)
+DFF (Data Flip-Flop) - The "memory":
+
+Stores whatever the Mux gives it
+Outputs it the next time step
+This is why there's a delay!
+Simple analogy:
+Imagine a safe with**** a display:
+
+The display shows what's inside (output)
+You can put a new value in (input with load=1)
+If load=0, the safe keeps what it had
+It takes 1 second for the new value to appear on the display
+
+example 02 :
+
+Cycle 0:  DFF contains: 5,  load=1, in=10  →  Output: 5
+Cycle 1:  DFF contains: 10, load=0, in=20  →  Output: 10 (stays same!)
+Cycle 2:  DFF contains: 10, load=1, in=30  →  Output: 10
+Cycle 3:  DFF contains: 30, load=0, in=40  →  Output: 30 (stays same!)
+
 ## RAM(8/64/512/4K/16K)
 
+### What is RAM (Random Access Memory)?
 
-In **Section 12.4**  we talked about how a sequential device as simple as an R-S flip-flop  could be used to remember one bit of data. We now develop a complete  memory cell, called a binary cell, based on the flip-flop. When such a  cell is selected and in “read” mode, the current value of its underlying  flip-flop will be transferred to the cell’s output line. When the cell  is selected and in “write” mode, an input data signal will determine the  value remembered by the flip-flop. A complete circuit is shown in **Figure 12.34**.
+RAM (Random Access Memory) is a type of volatile memory that allows data to be read and written in any order. Unlike sequential memory devices, RAM provides direct access to any memory location, making it extremely fast for data retrieval and storage.
 
-  The fundamental design of this binary cell is based on the R-S flip-flop of **Figure 12.23**  though there are some significant differences. To begin with, the cell  has three inputs and a single output. The inputs are labeled “Select”,  “Read/write”, and “Input”. The output line is labeled “Output”.
+In the Nand to Tetris course, we build RAM units hierarchically, starting from individual registers and scaling up to larger memory units.
 
-![](http://watson.latech.edu/book/circuits/images/watsonvmdetail.png)
+### RAM Architecture Hierarchy
 
-**Figure 12.34:** A Binary cell (BC) for RAM memory
+The RAM units are built in a hierarchical manner:
 
-The “select” input is used to access the cell, either for  reading or writing. When the select line is high, “1”, then a memory  operation can be performed on this cell. When the select line of the  binary cell is low, “0”, then the contents of the cell are not currently  of interest – i.e., at the present time the cell is not being read from  or written to. We can see how “select” is given this power by noting  that both the inputs and the output of the underlying R-S flip-flop are  routed through**and**gates and that  “select” is one of the inputs to each of these gates. Thus, if “select”  is low, the inputs to the R-S flip-flop will stay low (meaning that its  stored value will not change) and the output produced by the cell will  be low (regardless of whether the actual bit held in the flip-flop is  “0” or “1”).
+```
+Register (1 word)
+    ↓
+RAM8 (8 registers)
+    ↓
+RAM64 (8 × RAM8)
+    ↓
+RAM512 (8 × RAM64)
+    ↓
+RAM4K (8 × RAM512)
+    ↓
+RAM16K (4 × RAM4K)
+```
 
-  The next input we’ll examine is “Read/write”. A system clock will  drive this input. As was the case with the clocked R-S flip-flop of **Figure 12.31**,  a low, “0”, will signify “read” while a high, “1”, will signify  “write”. During the read phase it will not be possible to write to the  cell. Likewise, during the write phase it will not be possible to read  the contents of the cell.
+### RAM8 (8 Registers)
 
-Assume the cell has been selected (i.e., “select” is high  signifying that a memory access operation is to be performed on this  cell.)  Furthermore, assume that the clock value on the “Read/write”  line is low (forcing the “negated Read/write” to high) indicating the  cell contents are to be read. In this case, the value output by the cell  will depend solely on the Q value of the flip-flop. If Q is low, the  cell outputs a “0”, if Q is high, the cell outputs a “1”. This is  because the**and**gate attached to  the cell’s output line has three inputs: “select”, “negated Read/write”,  and Q; and both “select” and “negated Read/write” are currently high.
+**RAM8** is the smallest RAM unit consisting of 8 registers, each storing a 16-bit word.
 
-As mentioned earlier, when the cell is being read its contents  cannot be modified. The reason for this is that the same low value on  the “Read/write” line that allows the cell to be read, is fed into the**and**gates  guarding the inputs to the flip-flop. Thus during reads, the inputs to R  and S are guaranteed to be low preventing the value of the flip-flop  from being modified.
+#### Components:
 
-  When the cell is selected and the “Read/write” line is set to high,  signifying a “write” operation, the value placed into the cell will  depend solely on the state of the “Input” line.
+- **8 registers** for data storage
+- **3-bit address** (to select one of 8 registers: 2³ = 8)
+- **DMux8Way** (to route input to the correct register)
+- **Mux8Way16** (to select output from the correct register)
 
-The reason for this is that the**and**gates  that guard the R and S inputs of the flip-flop will both have two of  their inputs set high: the “select” and “Read/write” inputs. Thus, if  “Input” is high, S (set) will receive a high and the flip-flop will  store a “1”. If, on the other hand, “Input” is low, then R (reset) which  receives a negated version of “Input” will go high and the flip-flop  will reset to “0”. Note that having a negated version of the input line  run into R is a clever idea, since it prevents the R-S flip-flop from  ever entering into its invalid state. (Recall from our discussion of R-S  flip-flops in **Section 12.4** that if R and S are ever set to “1” at the same time the flip-flop enters a stable, but invalid state.)
+#### How it works:
 
-![](http://watson.latech.edu/book/circuits/images/addandalu.png)
+1. The 3-bit address selects which register to access
+2. If load=1, the input data is written to the selected register
+3. The output always shows the content of the addressed register
 
-**Figure 12.35:** A Binary Cell – encapsulated view
+```
+Address Range: 0-7 (000 to 111 in binary)
+Storage: 8 words × 16 bits = 128 bits total
+```
 
-It is worth mentioning that during write operations, reading is prohibited. This is easy to see, since the**and**gate  guarding the “Output” line receives one of its inputs from “negated  Read/write” which is held low during write operations. Hence, output  from the cell will always be low, “0”, during writes, regardless of the  actual value on the Q line.
+**Example:**
 
-**Figure 12.35** contains an  encapsulated view of a single binary cell. An entire random access  memory (RAM) can be constructed from a large collection of binary cells,  together with some address decoding circuitry. The Watson Virtual  Machine includes a memory of 256 words, each 16 bits wide – much too  large to be conveniently illustrated.[[4]](http://watson.latech.edu/book/circuits/circuitsMicrocomputer3.html#ftn4) In order to have a manageable circuit diagram, **Figure 12.36** presents an implementation of a 4 x 2 RAM. Such a RAM module has four separate “words” of memory, each two bits wide.
+```
+Address = 3 (011), Load = 1, In = 1234
+→ Register[3] stores 1234
+→ Out = 1234 (after next clock cycle)
+```
 
-  A word of storage will consist of two binary cells arranged in such a  way that both bits can be accessed simultaneously. Because the memory  consists of four of these words, a total of eight binary cells will be  used. These cells will be laid out according to a four row by two column  grid pattern, where each row of the grid represents one word.
+┌─────────────────────────────────────┐
+│  RAM64 (64 registers total)         │
+│                                     │
+│  ┌──────────────────────────────┐   │
+│  │ RAM8[0] (registers 0-7)      │   │
+│  │ RAM8[1] (registers 8-15)     │   │
+│  │ RAM8[2] (registers 16-23)    │   │
+│  │ RAM8[3] (registers 24-31)    │   │
+│  │ RAM8[4] (registers 32-39)    │   │
+│  │ RAM8[5] (registers 40-47)    │   │
+│  │ RAM8[6] (registers 48-55)    │   │
+│  │ RAM8[7] (registers 56-63)    │   │
+│  └──────────────────────────────┘   │
+│           ↑                         │
+│        address[3:6]                 │
+│        selects RAM8 block           │
+└─────────────────────────────────────┘
 
-Examining the inputs to the memory unit, we see that there are two input data lines at the top of the diagram (D**1**and D**0**),  representing the two bits of the number to be written. One of these  bits will be the high-order data bit and one the low. The signal from  the high-order data input line is fed to the high-order bit of every  word. Likewise, the low-order data input signal is fed to the low-order  bit of every word.
+### RAM64 (64 Registers)
 
-On the left side of the circuit diagram, a two-bit address (A**1**and A**0**)  is input. This address is fed into a two-to-four decoder that generates  a high signal down the data line corresponding to the word of memory to  be accessed (either read or written).  The decoder also accepts an  “enable” input. This input essentially tells the decoder whether the bit  pattern currently on the input address lines is a valid memory address  that is to be decoded, or whether the circuit should just ignore this  bit pattern for the moment.
+**RAM64** consists of 8 RAM8 units, providing 64 registers total.
 
-![](http://watson.latech.edu/book/circuits/images/binaryram.png)
+#### Components:
 
-**Figure 12.36:** A 4 x 2 RAM memory
+- **8 RAM8 units** (each containing 8 registers)
+- **6-bit address** (to select one of 64 registers: 2⁶ = 64)
+  - First 3 bits select which RAM8 unit (0-7)
+  - Last 3 bits select which register within that RAM8 (0-7)
+- **DMux8Way** (to route load signal to correct RAM8)
+- **Mux8Way16** (to select output from correct RAM8)
 
-			The final input is the clock signal that the memory unit receives  via the read/write line. Note that this signal is propagated to every  binary cell in the entire RAM, allowing the memory unit to either read  from or write to any of the binary cells. 		
-Two output lines are visible at the bottom of the circuit (Z**1**and Z**0**);  one for the high-order bit of the number to be output, one for the  low-order bit. As you can see, the output lines from each of the four  binary cells making up a column are fed into a multi-input**or**gate  that is tied to the output line for that column. So, if any of the  binary cells in a column produces a “1”, then that column’s output line  will produce a “1” as well. Due to the presence of the address decoder,  however, we can be sure that only one row, and thus only one bit per  column, can be accessed (either read or written) at any point in time.
+#### How it works:
 
-We now come to the close of our discussion concerning the  implementation of main memory, and thus to the end of this book’s  material on computer “hardware”. As I am sure you can appreciate, we  have just scratched the surface of this fascinating field. However, my  hope is that this brief introduction to digital logic has convinced you  that computers can be completely understood in terms of large networks  of very simple logic gates that are interconnected in complex patterns.
+1. Address bits 3-5 (MSB) select which RAM8 unit
+2. Address bits 0-2 (LSB) select which register within the RAM8
+3. Only the selected RAM8 unit receives the load signal
+
+```
+Address Range: 0-63 (000000 to 111111 in binary)
+Storage: 64 words × 16 bits = 1024 bits total
+
+Address breakdown:
+Bits [5-3]: RAM8 selector (0-7)
+Bits [2-0]: Register within RAM8 (0-7)
+```
+
+**Example:**
+
+```
+Address = 19 (010011)
+→ Bits [5-3] = 010 = RAM8 #2
+→ Bits [2-0] = 011 = Register #3 within RAM8 #2
+```
+
+### RAM512 (512 Registers)
+
+**RAM512** consists of 8 RAM64 units, providing 512 registers total.
+
+#### Components:
+
+- **8 RAM64 units** (each containing 64 registers)
+- **9-bit address** (to select one of 512 registers: 2⁹ = 512)
+  - First 3 bits select which RAM64 unit (0-7)
+  - Last 6 bits select which register within that RAM64 (0-63)
+- **DMux8Way** (to route load signal to correct RAM64)
+- **Mux8Way16** (to select output from correct RAM64)
+
+#### How it works:
+
+1. Address bits 6-8 (MSB) select which RAM64 unit
+2. Address bits 0-5 (LSB) are passed to the selected RAM64
+
+```
+Address Range: 0-511 (000000000 to 111111111 in binary)
+Storage: 512 words × 16 bits = 8192 bits = 8 Kbits
+
+Address breakdown:
+Bits [8-6]: RAM64 selector (0-7)
+Bits [5-0]: Register within RAM64 (0-63)
+```
+
+**Example:**
+
+```
+Address = 325 (101000101)
+→ Bits [8-6] = 101 = RAM64 #5
+→ Bits [5-0] = 000101 = Register #5 within RAM64 #5
+```
+
+### RAM4K (4096 Registers)
+
+**RAM4K** consists of 8 RAM512 units, providing 4096 registers total (4K).
+
+#### Components:
+
+- **8 RAM512 units** (each containing 512 registers)
+- **12-bit address** (to select one of 4096 registers: 2¹² = 4096)
+  - First 3 bits select which RAM512 unit (0-7)
+  - Last 9 bits select which register within that RAM512 (0-511)
+- **DMux8Way** (to route load signal to correct RAM512)
+- **Mux8Way16** (to select output from correct RAM512)
+
+#### How it works:
+
+1. Address bits 9-11 (MSB) select which RAM512 unit
+2. Address bits 0-8 (LSB) are passed to the selected RAM512
+
+```
+Address Range: 0-4095 (000000000000 to 111111111111 in binary)
+Storage: 4096 words × 16 bits = 65536 bits = 64 Kbits
+
+Address breakdown:
+Bits [11-9]: RAM512 selector (0-7)
+Bits [8-0]: Register within RAM512 (0-511)
+```
+
+**Example:**
+
+```
+Address = 2050 (100000000010)
+→ Bits [11-9] = 100 = RAM512 #4
+→ Bits [8-0] = 000000010 = Register #2 within RAM512 #4
+```
+
+### RAM16K (16384 Registers)
+
+**RAM16K** consists of 4 RAM4K units, providing 16384 registers total (16K).
+
+#### Components:
+
+- **4 RAM4K units** (each containing 4096 registers)
+- **14-bit address** (to select one of 16384 registers: 2¹⁴ = 16384)
+  - First 2 bits select which RAM4K unit (0-3)
+  - Last 12 bits select which register within that RAM4K (0-4095)
+- **DMux4Way** (to route load signal to correct RAM4K)
+- **Mux4Way16** (to select output from correct RAM4K)
+
+#### How it works:
+
+1. Address bits 12-13 (MSB) select which RAM4K unit
+2. Address bits 0-11 (LSB) are passed to the selected RAM4K
+
+```
+Address Range: 0-16383 (00000000000000 to 11111111111111 in binary)
+Storage: 16384 words × 16 bits = 262144 bits = 256 Kbits = 32 KB
+
+Address breakdown:
+Bits [13-12]: RAM4K selector (0-3)
+Bits [11-0]: Register within RAM4K (0-4095)
+```
+
+**Example:**
+
+```
+Address = 10000 (10011100010000)
+→ Bits [13-12] = 10 = RAM4K #2
+→ Bits [11-0] = 011100010000 = Register #1808 within RAM4K #2
+```
+
+### Key Concepts Across All RAM Units
+
+#### 1. Address Decoding
+
+Each RAM unit uses part of the address to select a sub-unit and passes the remaining bits down the hierarchy.
+
+#### 2. Load Signal Distribution
+
+The load signal is only sent to the selected sub-unit using a DMux, preventing unwanted writes.
+
+#### 3. Output Multiplexing
+
+All sub-units output their values, but a Mux selects only the output from the addressed unit.
+
+#### 4. Hierarchical Design Pattern
+
+```
+RAMn consists of k RAMm units where:
+- n = k × m
+- Address bits = log₂(k) + (address bits of RAMm)
+```
+
+### Comparison Table
+
+
+| RAM Unit | # Registers | Address Bits | Sub-units   | Structure     |
+| -------- | ----------- | ------------ | ----------- | ------------- |
+| RAM8     | 8           | 3            | 8 Registers | 8 × Register |
+| RAM64    | 64          | 6            | 8 RAM8      | 8 × RAM8     |
+| RAM512   | 512         | 9            | 8 RAM64     | 8 × RAM64    |
+| RAM4K    | 4096        | 12           | 8 RAM512    | 8 × RAM512   |
+| RAM16K   | 16384       | 14           | 4 RAM4K     | 4 × RAM4K    |
+
+### Timing Behavior
+
+All RAM units follow the same timing pattern:
+
+```
+Time t:   Address = A, Load = 1, In = V
+          Out = old value at address A
+
+Time t+1: The register at address A now contains V
+          Out = V (if still addressing A)
+```
+
+The write operation takes one clock cycle to complete, just like the basic register.
+
+### Why This Hierarchy Matters
+
+1. **Modularity**: Each RAM unit is built from smaller, already-tested units
+2. **Scalability**: Easy to create larger memories by following the pattern
+3. **Efficiency**: Hierarchical addressing is faster than scanning all registers
+4. **Real-world**: Modern computer memory uses similar hierarchical structures
+
+This hierarchical approach demonstrates how complex systems (16K words of memory) can be built from simple components (flip-flops) through systematic, layered design.
+
+## Resources :
+
+- [](https://cs.nyu.edu/~gottlieb/courses/2000s/2001-02-fall/arch/lectures/lecture-05.html)
