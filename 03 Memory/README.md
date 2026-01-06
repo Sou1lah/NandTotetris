@@ -598,6 +598,151 @@ Control Unit decodes instruction and may tell PC to jump
 Inc16 helps PC move to the next instruction
 This cycle repeats creating the program flow
 
+## Program Counter (PC)
+
+A **Program Counter** is a 16-bit register that keeps track of which instruction the CPU should execute next. It's the "brain's memory" of program position.
+
+### PC Behavior
+
+The PC responds to 4 control signals with the following priority:
+
+| Signal | Behavior | Example |
+|--------|----------|---------|
+| **reset** | Set PC to 0 (restart program) | `reset=1` → PC = 0 |
+| **load** | Load a specific address (jump) | `load=1, in=100` → PC = 100 |
+| **inc** | Increment by 1 (next instruction) | `inc=1` → PC = PC + 1 |
+| **none** | Hold current value | All 0 → PC unchanged |
+
+### PC Logic Priority
+
+```
+if reset == 1:
+    out = 0
+else if load == 1:
+    out = in[16]
+else if inc == 1:
+    out = out + 1
+else:
+    out = out (no change)
+```
+
+### How PC Works Internally
+
+```
+┌─────────────────────────────────────────────────┐
+│  Current PC Value (Stored in Register)          │
+└────────────────────┬────────────────────────────┘
+                     │
+             ┌───────▼────────┐
+             │     Inc16      │
+             │  (adds 1)      │
+             └───────┬────────┘
+                     │
+        ┌────────────▼────────────┐
+        │   Mux4Way Selection     │
+        │  (Choose 1 of 4 paths)  │
+        └────────────┬────────────┘
+                     │
+    ┌────────┬───────┼───────┬──────────┐
+    │        │       │       │          │
+   (0)   (in)   (PC+1)    (PC)    Control
+                               (reset/load/inc)
+                     │
+             ┌───────▼────────┐
+             │   Register     │
+             │  (Storage)     │
+             └───────┬────────┘
+                     │
+              Output PC → to CPU
+```
+
+### PC Relationships with Other Chips
+
+#### 1. **PC ↔ RAM16K (Instruction Fetching)**
+```
+PC Output (address[14])
+         ↓
+    ┌─────────────┐
+    │  RAM16K     │
+    │  (Program   │
+    │   Memory)   │
+    └─────────────┘
+         ↓
+  Instruction @ PC address
+```
+- PC provides the address
+- RAM16K outputs the instruction at that address
+
+#### 2. **PC ↔ Inc16 (Increment Logic)**
+```
+PC Value ──►┌─────────┐
+            │  Inc16  │ ──► PC + 1
+            └─────────┘
+                ↓
+          (Feeds back to Mux)
+```
+- Inc16 adds 1 to current PC
+- Used for sequential instruction execution
+
+#### 3. **PC ↔ Register (Storage)**
+```
+PC IS a 16-bit Register
+```
+- PC is fundamentally a Register chip
+- Stores the current program address
+- Updates on each clock cycle based on control signals
+
+#### 4. **PC ↔ Mux4Way (Control Routing)**
+```
+Inputs to Mux4Way:
+  a=0          (reset path)
+  b=in[16]     (load/jump path)
+  c=PC+1       (increment path)
+  d=PC         (hold path)
+        ↓
+  sel={reset, load, inc}
+        ↓
+  Output → Register → PC
+```
+
+### PC in the Full CPU Architecture
+
+```
+┌────────────────────────────────────────────────────┐
+│              CPU (Hack Computer)                    │
+│                                                     │
+│  ┌────────────┐          ┌──────────────┐          │
+│  │     PC     │ address  │   RAM16K     │          │
+│  │ (Program   │─────────►│ (Instructions)│          │
+│  │ Counter)   │          │              │          │
+│  └─────▲──────┘          └────────┬─────┘          │
+│        │                          │                 │
+│        │                    ┌─────▼─────┐          │
+│        │                    │ Decoder/   │          │
+│        │                    │ Control    │          │
+│        │                    │ Unit       │          │
+│        │                    └─────┬─────┘          │
+│        │                          │                 │
+│        │                    ┌─────▼──────┐         │
+│        │                    │    ALU      │         │
+│        │                    │ (Execution) │         │
+│        │                    └─────┬──────┘         │
+│        │                          │                 │
+│        └──────(jump signal)───────┘                 │
+│           (reset/load/inc)                          │
+│                                                     │
+└────────────────────────────────────────────────────┘
+```
+
+### Execution Flow Example
+
+**Cycle 1:** PC=0 → RAM outputs instruction 0 → set inc=1  
+**Cycle 2:** PC=1 → RAM outputs instruction 1 → set inc=1  
+**Cycle 3:** PC=2 → RAM outputs instruction 2 (JUMP to 100) → set load=1, in=100  
+**Cycle 4:** PC=100 → RAM outputs instruction 100 → set inc=1  
+
+This cycle repeats continuously, executing the program sequentially or jumping as needed.
+
 ## Resources :
 
 - [link01](https://cs.nyu.edu/~gottlieb/courses/2000s/2001-02-fall/arch/lectures/lecture-05.html)
