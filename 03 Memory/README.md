@@ -487,7 +487,7 @@ Register - Stores the selected value and outputs it
       ┌────▼────────┐
       │  Register   │ ──► Output PC
       └─────────────┘
-      ```
+```
 
 ### Relationship with Other Chips:
 
