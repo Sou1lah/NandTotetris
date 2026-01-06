@@ -14,5 +14,9 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    Inc16(in=regout, out=incremented);
+    Mux16(a=regout, b=incremented, sel=inc, out=out1);
+    Mux16(a=out1, b=in, sel=load, out=out2);
+    Mux16(a=out2, b=false, sel=reset, out=toload);
+    Register(in=toload, load=true, out=regout, out=out);
 }

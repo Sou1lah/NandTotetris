@@ -455,6 +455,151 @@ The write operation takes one clock cycle to complete, just like the basic regis
 
 This hierarchical approach demonstrates how complex systems (16K words of memory) can be built from simple components (flip-flops) through systematic, layered design.
 
+
+## Program Counter
+
+i didnt find quit a good documntation for program counter but this youtube video saved which made it very easy and made me feel really dumb
+
+- [youtube.com](https://www.youtube.com/watch?v=ccf9ngGIb8c)
+
+How PC is Built (Implementation):
+
+The PC needs to support 4 operations on the same value. Here's how it works internally:
+
+Inc16 - Adds 1 to the current PC value
+Mux chips - Select between: reset (0), load (new value), or increment
+Register - Stores the selected value and outputs it
+┌─────────────────────────────────────┐
+│  Current PC value (from Register)   │
+└──────────┬──────────────────────────┘
+           │
+      ┌────▼────┐
+      │  Inc16   │ ──► PC + 1
+      └────┬────┘
+           │
+    ┌──────▼──────┐
+    │  Mux logic  │
+    │  (4 inputs) │
+    └──────┬──────┘
+      inc/load/reset signals
+           │
+      ┌────▼────────┐
+      │  Register   │ ──► Output PC
+      └─────────────┘
+
+### Relationship with Other Chips:
+
+1. Relationship with RAM (Instruction Memory)
+
+PC is the address selector for RAM
+PC outputs an address → RAM uses that address to fetch the instruction
+When PC = 5, RAM outputs instruction at address 5
+PC (output) ──address[14]──► RAM16K
+                              │
+                              └──► Instruction at PC location
+
+### 2. Relationship with Inc16 (Arithmetic)
+
+PC uses Inc16 to increment its value
+Inc16 takes current PC + 1 and gives the next instruction address
+
+PC ──in──► Inc16 ──out(PC+1)──► back to Mux
+
+### 3. Relationship with Register (Storage)
+
+PC is a 16-bit Register
+The Register stores the current program counter value
+At each clock tick, the Register updates based on control signals
+
+Register = PC (but u can say its like special register )
+
+### 4. Relationship with Mux (Selection Logic)
+
+PC uses Mux to choose between:
+0 (reset)
+in[16] (load - jump)
+PC + 1 (increment - normal flow)
+PC (hold - stay same)
+
+     ┌─── 0 ────┐
+     │           │
+  in[16] ──► Mux ──► Register ──► PC
+     │           │
+ (PC+1) ────────┘
+     │
+  (PC) ─────────┘
+
+### Real CPU Execution Flow:
+
+Let's say we're fetching and executing instructions:
+Clock Cycle 1:
+┌──────────────────────────────────────┐
+│ PC = 0                               │
+├──────────────────────────────────────┤
+│ PC (0) ──address──► RAM ──► Fetch instruction at address 0
+│ Execute instruction 0
+│ Set inc=1 to prepare for next
+└──────────────────────────────────────┘
+
+Clock Cycle 2:
+┌──────────────────────────────────────┐
+│ PC incremented to 1 (Inc16 worked)   │
+├──────────────────────────────────────┤
+│ PC (1) ──address──► RAM ──► Fetch instruction at address 1
+│ Execute instruction 1
+│ Set inc=1 again
+└──────────────────────────────────────┘
+
+Clock Cycle 3:
+┌──────────────────────────────────────┐
+│ PC incremented to 2                  │
+├──────────────────────────────────────┤
+│ PC (2) ──address──► RAM ──► Fetch instruction at address 2
+│ But instruction 2 is a JUMP to 100
+│ Set load=1, in=100
+└──────────────────────────────────────┘
+
+Clock Cycle 4:
+┌──────────────────────────────────────┐
+│ PC loaded with 100 (jumped!)         │
+├──────────────────────────────────────┤
+│ PC (100) ──address──► RAM ──► Fetch instruction at address 100
+│ Execute instruction 100
+│ Set inc=1
+└──────────────────────────────────────┘
+
+### PC's Role in the Full CPU:
+┌─────────────────────────────────────────────────────┐
+│              CPU (Hack Computer)                     │
+│                                                      │
+│  ┌──────────┐         ┌─────────────┐               │
+│  │    PC    │────────►│  RAM16K     │               │
+│  │          │ address │(Instruction │               │
+│  └────▲─────┘         │  Memory)    │               │
+│       │                │             │               │
+│       │ jump signal    └────────┬────┘               │
+│       │                         │                    │
+│       │              ┌──────────▼──────┐             │
+│       │              │  Control Unit   │             │
+│       │              │ (Decodes instr.)│             │
+│       │              └────────┬────────┘             │
+│       │                       │                      │
+│       │                    ┌──▼──┐                  │
+│       └────────────────────│ ALU │                  │
+│         (next addr)        └─────┘                  │
+│                                                      │
+└─────────────────────────────────────────────────────┘
+
+### In summary:
+
+PC keeps track of execution position
+RAM uses PC to fetch the current instruction
+Control Unit decodes instruction and may tell PC to jump
+Inc16 helps PC move to the next instruction
+This cycle repeats creating the program flow
+
 ## Resources :
 
-- [](https://cs.nyu.edu/~gottlieb/courses/2000s/2001-02-fall/arch/lectures/lecture-05.html)
+- [link01](https://cs.nyu.edu/~gottlieb/courses/2000s/2001-02-fall/arch/lectures/lecture-05.html)
+- [watson](http://watson.latech.edu/book/circuits/circuitsSequential1.html)
+- [geekforgeeks](https://www.geeksforgeeks.org/digital-logic/shift-registers-in-digital-logic/)
