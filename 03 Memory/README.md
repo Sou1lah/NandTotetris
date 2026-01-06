@@ -496,17 +496,19 @@ Register - Stores the selected value and outputs it
 PC is the address selector for RAM
 PC outputs an address → RAM uses that address to fetch the instruction
 When PC = 5, RAM outputs instruction at address 5
+```
 PC (output) ──address[14]──► RAM16K
                               │
                               └──► Instruction at PC location
-
+```
 ### 2. Relationship with Inc16 (Arithmetic)
 
 PC uses Inc16 to increment its value
 Inc16 takes current PC + 1 and gives the next instruction address
 
+```
 PC ──in──► Inc16 ──out(PC+1)──► back to Mux
-
+```
 ### 3. Relationship with Register (Storage)
 
 PC is a 16-bit Register
@@ -522,7 +524,7 @@ PC uses Mux to choose between:
 in[16] (load - jump)
 PC + 1 (increment - normal flow)
 PC (hold - stay same)
-
+```
      ┌─── 0 ────┐
      │           │
   in[16] ──► Mux ──► Register ──► PC
@@ -530,10 +532,11 @@ PC (hold - stay same)
  (PC+1) ────────┘
      │
   (PC) ─────────┘
-
+```
 ### Real CPU Execution Flow:
 
 Let's say we're fetching and executing instructions:
+```
 Clock Cycle 1:
 ┌──────────────────────────────────────┐
 │ PC = 0                               │
@@ -569,6 +572,7 @@ Clock Cycle 4:
 │ Execute instruction 100
 │ Set inc=1
 └──────────────────────────────────────┘
+```
 
 ### PC's Role in the Full CPU:
 ┌─────────────────────────────────────────────────────┐
