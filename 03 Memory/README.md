@@ -575,6 +575,7 @@ Clock Cycle 4:
 ```
 
 ### PC's Role in the Full CPU:
+```
 ┌─────────────────────────────────────────────────────┐
 │              CPU (Hack Computer)                     │
 │                                                      │
@@ -595,7 +596,7 @@ Clock Cycle 4:
 │         (next addr)        └─────┘                  │
 │                                                      │
 └─────────────────────────────────────────────────────┘
-
+```
 ### In summary:
 
 PC keeps track of execution position
