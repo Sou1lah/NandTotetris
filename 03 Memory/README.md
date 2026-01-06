@@ -469,6 +469,7 @@ The PC needs to support 4 operations on the same value. Here's how it works inte
 Inc16 - Adds 1 to the current PC value
 Mux chips - Select between: reset (0), load (new value), or increment
 Register - Stores the selected value and outputs it
+```
 ┌─────────────────────────────────────┐
 │  Current PC value (from Register)   │
 └──────────┬──────────────────────────┘
@@ -486,6 +487,7 @@ Register - Stores the selected value and outputs it
       ┌────▼────────┐
       │  Register   │ ──► Output PC
       └─────────────┘
+      ```
 
 ### Relationship with Other Chips:
 
