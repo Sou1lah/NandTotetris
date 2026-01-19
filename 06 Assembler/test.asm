@@ -1,8 +1,10 @@
 (START) // ROM = 0 = jump
-@R0 //RAM (predfined)
-D=M
-@LOOP
+@10      // A-instruction with number
+D=A
+@LOOP    // A-instruction with label (to be resolved)
 0;JMP
-(LOOP)
-@R1
-D=D+M
+(LOOP)   // Label
+@R0      // A-instruction with predefined symbol
+M=D
+@SCREEN  // Another predefined symbol
+D=M
