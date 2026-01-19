@@ -1,6 +1,6 @@
 # Nand to Tetris: Build a Modern Computer from First Principles
 
-[Course Website](https://www.coursera.org/learn/build-a-computer)
+[Course Website](https://www.nand2tetris.org/)
 
 Welcome to the **Nand to Tetris** project! This repository contains all the code, HDL designs, documentation, and tools for building a modern computer system from the ground up, following the legendary Nand2Tetris course.
 
@@ -23,15 +23,15 @@ You will design and implement:
 
 ## Directory Overview
 
-| Folder         | Description                                      | Documentation                                    |
-|----------------|--------------------------------------------------|--------------------------------------------------|
-| 01 LogicGates  | Basic logic gates and combinational circuits     | [README](01%20LogicGates/README.md)              |
-| 02 ALU         | Arithmetic Logic Unit design                     | [README](02%20ALU/README.md)                     |
-| 03 Memory      | Registers, RAM hierarchy, Program Counter        | [README](03%20Memory/README.md)                  |
-| 04 Assembler   | Hack assembly language and assembler basics      | [README](04%20Assembler/README.md)               |
-| 05 Computer    | Full Hack computer integration                   | [README](05%20Computer/README.md)                |
-| 06 Assembler   | C implementation of the assembler                | [README](06%20Assembler/README.md)               |
-| ...            | (Later: VM, compiler, OS, applications, etc.)    |                                                  |
+| Folder         | Description                                      | Documentation                                                                                                    |
+|----------------|--------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| 01 LogicGates  | Basic logic gates and combinational circuits     | [README](https://github.com/Sou1lah/NandTotetris/tree/main/01%20Logic%20Gates)                                   |
+| 02 ALU         | Arithmetic Logic Unit design                     | [README](https://github.com/Sou1lah/NandTotetris/tree/main/02%20ALU)                                             |
+| 03 Memory      | Registers, RAM hierarchy, Program Counter        | [README](https://github.com/Sou1lah/NandTotetris/tree/main/03%20Memory)                                          |
+| 04 Assembler   | Hack assembly language and assembler basics      | [README](https://github.com/Sou1lah/NandTotetris/tree/main/04%20Assembler)                                       |
+| 05 Computer    | Full Hack computer integration                   | [README](https://github.com/Sou1lah/NandTotetris/tree/main/05%20Computer)                                        |
+| 06 Assembler   | C implementation of the assembler                | [README](https://github.com/Sou1lah/NandTotetris/tree/main/06%20Assembler)                                       |
+| ...            | (Later: VM, compiler, OS, applications, etc.)    |                                                                                                                  |
 
 ---
 
