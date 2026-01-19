@@ -475,34 +475,3 @@ int main(int argc, char *argv[]) {
     freeSymbolTable();
     return 0;
 }
-
-// =======================
-// Step 7: Testing Utilities
-// =======================
-
-// void runTests();
-
-// =======================
-// Step 8: Optimization and Cleanup
-// =======================
-
-// Free symbol table memory
-// void freeSymbolTable();
-
-// =======================
-// Optional: Command-line Arguments, Error Handling
-// =======================
-
-// int main(int argc, char *argv[])
-// {
-//     // 1. Parse command-line arguments
-//     // 2. Open input .asm file
-
-//     // 3. Read and clean lines
-//     // 4. First pass: build symbol table
-//     // 5. Second pass: translate instructions
-//     // 6. Write .hack output file
-//     // 7. Cleanup
-//     return 0;
-// }
-
