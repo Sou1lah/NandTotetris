@@ -455,7 +455,6 @@ The write operation takes one clock cycle to complete, just like the basic regis
 
 This hierarchical approach demonstrates how complex systems (16K words of memory) can be built from simple components (flip-flops) through systematic, layered design.
 
-
 ## Program Counter
 
 i didnt find quit a good documntation for program counter but this youtube video saved which made it very easy and made me feel really dumb
@@ -469,6 +468,7 @@ The PC needs to support 4 operations on the same value. Here's how it works inte
 Inc16 - Adds 1 to the current PC value
 Mux chips - Select between: reset (0), load (new value), or increment
 Register - Stores the selected value and outputs it
+
 ```
 ┌─────────────────────────────────────┐
 │  Current PC value (from Register)   │
@@ -496,11 +496,13 @@ Register - Stores the selected value and outputs it
 PC is the address selector for RAM
 PC outputs an address → RAM uses that address to fetch the instruction
 When PC = 5, RAM outputs instruction at address 5
+
 ```
 PC (output) ──address[14]──► RAM16K
                               │
                               └──► Instruction at PC location
 ```
+
 ### 2. Relationship with Inc16 (Arithmetic)
 
 PC uses Inc16 to increment its value
@@ -509,6 +511,7 @@ Inc16 takes current PC + 1 and gives the next instruction address
 ```
 PC ──in──► Inc16 ──out(PC+1)──► back to Mux
 ```
+
 ### 3. Relationship with Register (Storage)
 
 PC is a 16-bit Register
@@ -524,6 +527,7 @@ PC uses Mux to choose between:
 in[16] (load - jump)
 PC + 1 (increment - normal flow)
 PC (hold - stay same)
+
 ```
      ┌─── 0 ────┐
      │           │
@@ -533,9 +537,11 @@ PC (hold - stay same)
      │
   (PC) ─────────┘
 ```
+
 ### Real CPU Execution Flow:
 
 Let's say we're fetching and executing instructions:
+
 ```
 Clock Cycle 1:
 ┌──────────────────────────────────────┐
@@ -575,6 +581,7 @@ Clock Cycle 4:
 ```
 
 ### PC's Role in the Full CPU:
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │              CPU (Hack Computer)                     │
@@ -597,6 +604,7 @@ Clock Cycle 4:
 │                                                      │
 └─────────────────────────────────────────────────────┘
 ```
+
 ### In summary:
 
 PC keeps track of execution position
@@ -613,12 +621,13 @@ A **Program Counter** is a 16-bit register that keeps track of which instruction
 
 The PC responds to 4 control signals with the following priority:
 
-| Signal | Behavior | Example |
-|--------|----------|---------|
-| **reset** | Set PC to 0 (restart program) | `reset=1` → PC = 0 |
-| **load** | Load a specific address (jump) | `load=1, in=100` → PC = 100 |
-| **inc** | Increment by 1 (next instruction) | `inc=1` → PC = PC + 1 |
-| **none** | Hold current value | All 0 → PC unchanged |
+
+| Signal    | Behavior                          | Example                      |
+| --------- | --------------------------------- | ---------------------------- |
+| **reset** | Set PC to 0 (restart program)     | `reset=1` → PC = 0          |
+| **load**  | Load a specific address (jump)    | `load=1, in=100` → PC = 100 |
+| **inc**   | Increment by 1 (next instruction) | `inc=1` → PC = PC + 1       |
+| **none**  | Hold current value                | All 0 → PC unchanged        |
 
 ### PC Logic Priority
 
@@ -666,6 +675,7 @@ else:
 ### PC Relationships with Other Chips
 
 #### 1. **PC ↔ RAM16K (Instruction Fetching)**
+
 ```
 PC Output (address[14])
          ↓
@@ -677,10 +687,12 @@ PC Output (address[14])
          ↓
   Instruction @ PC address
 ```
+
 - PC provides the address
 - RAM16K outputs the instruction at that address
 
 #### 2. **PC ↔ Inc16 (Increment Logic)**
+
 ```
 PC Value ──►┌─────────┐
             │  Inc16  │ ──► PC + 1
@@ -688,18 +700,22 @@ PC Value ──►┌─────────┐
                 ↓
           (Feeds back to Mux)
 ```
+
 - Inc16 adds 1 to current PC
 - Used for sequential instruction execution
 
 #### 3. **PC ↔ Register (Storage)**
+
 ```
 PC IS a 16-bit Register
 ```
+
 - PC is fundamentally a Register chip
 - Stores the current program address
 - Updates on each clock cycle based on control signals
 
 #### 4. **PC ↔ Mux4Way (Control Routing)**
+
 ```
 Inputs to Mux4Way:
   a=0          (reset path)
@@ -743,10 +759,10 @@ Inputs to Mux4Way:
 
 ### Execution Flow Example
 
-**Cycle 1:** PC=0 → RAM outputs instruction 0 → set inc=1  
-**Cycle 2:** PC=1 → RAM outputs instruction 1 → set inc=1  
-**Cycle 3:** PC=2 → RAM outputs instruction 2 (JUMP to 100) → set load=1, in=100  
-**Cycle 4:** PC=100 → RAM outputs instruction 100 → set inc=1  
+**Cycle 1:** PC=0 → RAM outputs instruction 0 → set inc=1
+**Cycle 2:** PC=1 → RAM outputs instruction 1 → set inc=1
+**Cycle 3:** PC=2 → RAM outputs instruction 2 (JUMP to 100) → set load=1, in=100
+**Cycle 4:** PC=100 → RAM outputs instruction 100 → set inc=1
 
 This cycle repeats continuously, executing the program sequentially or jumping as needed.
 

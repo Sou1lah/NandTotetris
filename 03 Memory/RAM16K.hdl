@@ -15,8 +15,10 @@ CHIP RAM16K {
     PARTS:
     DMux4Way(in=load, sel=address[12..13], a=load0, b=load1, c=load2, d=load3);
     
+    // Each RAM4K has 4K (4096) registers, each 16 bits wide.
+    // So, each RAM4K is 4096 x 16 = 65536 bits (64K bits).
     RAM4K(in=in, load=load0, address=address[0..11], out=ram0);
-    RAM4K(in=in, load=load1, address=address[0..11], out=ram1);
+    RAM4K(in=in, load=load1, add ress=address[0..11], out=ram1);
     RAM4K(in=in, load=load2, address=address[0..11], out=ram2);
     RAM4K(in=in, load=load3, address=address[0..11], out=ram3);
     
