@@ -1,0 +1,10 @@
+// Simple VM example
+push constant 10   // Push 10 onto the stack
+push constant 5    // Push 5 onto the stack
+add                // Add top two values (10 + 5 = 15)
+pop local 0        // Store result (15) in local variable 0
+
+push constant 7    // Push 7 onto the stack
+push local 0       // Push local variable 0 (15) onto the stack
+sub                // Subtract top from second top (15 - 7 = 8)
+pop local 1        // Store result (8) in local variable 1
