@@ -1,0 +1,7 @@
+// Main.vm
+function Main.main 0
+push constant 111
+push constant 333
+call SimpleFunction.test 2
+pop temp 0
+return
