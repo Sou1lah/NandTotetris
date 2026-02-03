@@ -1,0 +1,49 @@
+class Game {
+    field Snake snake;
+    field Food food;
+    field int score;
+    field boolean gameOver;
+
+    constructor Game new() {
+        let snake = Snake.new();
+        let food = Food.new();
+        let score = 0;
+        let gameOver = false;
+        return this;
+    }
+
+    method void run() {
+        while (~gameOver) {
+            do snake.move();
+            do this.checkFood();
+            do this.checkCollision();
+            do this.draw();
+            do Sys.sleep(100); // delay for animation
+        }
+        do Sys.printString("Game Over\n");
+        return;
+    }
+
+    method void checkFood() {
+        if (snake.headX() = food.getX() & snake.headY() = food.getY()) {
+            do snake.grow();
+            do food.relocate();
+            let score = score + 1;
+        }
+        return;
+    }
+
+    method void checkCollision() {
+        if (snake.hitWall() | snake.hitSelf()) {
+            let gameOver = true;
+        }
+        return;
+    }
+
+    method void draw() {
+        do Screen.clearScreen();
+        do snake.draw();
+        do food.draw();
+        return;
+    }
+}

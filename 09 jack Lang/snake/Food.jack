@@ -1,0 +1,23 @@
+class Food {
+    field int x;
+    field int y;
+
+    constructor Food new() {
+        do this.relocate();
+        return this;
+    }
+
+    method void relocate() {
+        let x = Math.random() % 80; // screen width
+        let y = Math.random() % 50; // screen height
+        return;
+    }
+
+    method int getX() { return x; }
+    method int getY() { return y; }
+
+    method void draw() {
+        do Screen.setPixel(x, y, true);
+        return;
+    }
+}
