@@ -1,3 +1,6 @@
-// CompilationEngine interface
-// - High-level compile routines
-// - One function per grammar rule
+#ifndef PARSER_H
+#define PARSER_H
+
+void compileClass();          // Entry point for parsing
+
+#endif

@@ -190,4 +190,47 @@ This document explains, step by step, how a Jack compiler should work from **sta
    ↓ VM Emulator
 ```
 
-**End of Workflow**
+## Structure Overview
+
+```Jack Source (.jack)
+     │
+     ▼
+Tokenizer (lexical analysis)
+- Reads characters
+- Groups into tokens (keywords, symbols, identifiers, integers, strings)
+- Stores currentToken + currentType
+     │
+     ▼
+Parser (syntax analysis)
+- Reads tokens using getters
+- Understands program structure: class, subroutine, statements, expressions
+- Calls Symbol Table when it sees variables/functions
+     │
+     ▼
+Symbol Table (semantic analysis)
+- Stores variables: name, type, kind (static/field/arg/var), index
+- Keeps track of scope (class/subroutine)
+- Tells parser/VM writer where each variable lives
+     │
+     ▼
+VM Writer (code generation)
+- Generates stack-based Hack VM commands
+- Examples: push/pop, arithmetic, function call, return
+- Uses Symbol Table info to decide memory segments (local/this/static/argument)
+     │
+     ▼
+VM Output (.vm)
+- Human-readable stack code
+- Example:
+    push constant 5
+    pop local 0
+    return
+     │
+     ▼
+Hack Assembler / VM Translator
+- Converts VM commands → Hack assembly → binary (0s and 1s)
+- Example:
+    push constant 5 → @5, D=A, @SP, A=M, M=D, @SP, M=M+1
+- Final output → Hack machine code (.hack)
+- Can be loaded into the Hack CPU simulator
+```
