@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include "parser.h"
 #include "symbol_table.h"
+#include "SemanticAnalyzer.h"
 #include "vm_writer.h"
 #include <stdio.h>
 #include <stdlib.h>
